@@ -2,11 +2,13 @@ import React from 'react';
 import TestimonyAccent from 'assets/images/testimonial-landingpages-frame.jpg';
 import Star from 'elements/Star';
 import Button from 'elements/button';
+import Fade from 'react-reveal/Fade';
 
 
 export default function Testimoni({data}) {
     return (
         <section className="container">
+            <Fade bottom>
             <div className="row align-items-center">
                 <div className="col-auto" style={{marginRight: 70}}>
                     <div className="testimonial-hero" style={{ margin: `30px 0 0 30px`}}>
@@ -33,6 +35,7 @@ export default function Testimoni({data}) {
                     </div>
                 </div>
             </div>
+            </Fade>
         </section>
     );
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from 'elements/button';
 import BrandIcon from 'parts/IconText';
+import Fade from 'react-reveal/Fade';
 
 export default function Header(props) {
 const getNavLinkClass = path => {
@@ -9,6 +10,7 @@ const getNavLinkClass = path => {
 };
 
     return (
+        <Fade>
         <header className="spacing-sm" >
             <div className="container">
                 <nav className="navbar navbar-expand-lg navbar-light">
@@ -23,8 +25,8 @@ const getNavLinkClass = path => {
                         <li className={`nav-item${getNavLinkClass("/brows-by")}`}>
                             <Button className = "nav-link"
                             type = "link"
-                            href = "/brows-by" >
-                                Brows By
+                            href = "/browse-by" >
+                                Browse By
                             </Button>
                         </li>
                         <li className={`nav-item${getNavLinkClass("/stories")}`}>
@@ -47,5 +49,6 @@ const getNavLinkClass = path => {
             </div>
             
         </header>
+        </Fade>
     )
 }
