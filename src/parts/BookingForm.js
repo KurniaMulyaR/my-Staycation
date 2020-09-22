@@ -1,81 +1,97 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
-import Button from 'elements/button';
-import { InputNumber , InputDate } from 'elements/Form';
+import Button from "elements/button";
+import { InputNumber, InputDate } from "elements/Form";
 
-export default class BookingForm extends Component {
+class BookingForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: {
+        duration: 1,
+        date: {
+          startDate: new Date(),
+          endDate: new Date(),
+          key: "selection",
+        },
+      },
+    };
+  }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            data: {
-                duration: 1,
-                date: {
-                    startDate: new Date(),
-                    endDate: new Date(),
-                    key: "selection"
-                }
-            }
-        };
+  updateData = (e) => {
+    this.setState({
+      ...this.state,
+      data: {
+        ...this.state.data,
+        [e.target.name]: e.target.value,
+      },
+    });
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    const { data } = this.state;
+
+    if (prevState.data.date !== data.date) {
+      const startDate = new Date(data.date.startDate);
+      const endDate = new Date(data.date.endDate);
+      const countDuration = new Date(endDate - startDate).getDate();
+      this.setState({
+        data: {
+          ...this.state.data,
+          duration: countDuration,
+        },
+      });
     }
 
-    updateData = e => {
-        this.setState({
-            ...this.state,
-            data: {
-                ...this.state.data,
-                [e.target.name]: e.target.value
-            }
-        });
+    if (prevState.data.duration !== data.duration) {
+      const startDate = new Date(data.date.startDate);
+      const endDate = new Date(
+        startDate.setDate(startDate.getDate() + +data.duration - 1)
+      );
+      this.setState({
+        ...this.state,
+        data: {
+          ...this.state.data,
+          date: {
+            ...this.state.data.date,
+            endDate: endDate,
+          },
+        },
+      });
     }
+  }
 
-    componentDidUpdate(prevProps, prevState){
-        const { data } = this.state
+  startBooking = () => {
+    const { data } = this.state;
+    this.props.startBooking({
+      _id: this.props.itemDetails._id,
+      duration: data.duration,
+      date: {
+        startDate: data.date.startDate,
+        endDate: data.date.endDate,
+      },
+    });
+    this.props.history.push("/checkout");
+  };
 
-        if(prevState.data.date !== data.date){
-            const startDate = new Date(data.date.startDate);
-            const endDate = new Date(data.date.endDate);
-            const countDuration = new Date(endDate - startDate).getDate();
-            this.setState({
-                data: {
-                    ...this.state.data,
-                    duration: countDuration
-                }
-            });
-        }
-        if (prevState.data.duration !== data.duration) {
-            const startDate = new Date(data.date.startDate);
-            const endDate = new Date(
-                startDate.setDate(startDate.getDate() + +data.duration - 1)
-            );
-            this.setState({
-                ...this.state,
-                data: {
-                    ...this.state.data,
-                    date: {
-                        ...this.state.data.date,
-                        endDate: endDate
-                    }
-                }
-            });
-        }
-    }
+  render() {
+    const { data } = this.state;
+    const { itemDetails} = this.props;
 
-    
-    render() {
-        const { data } = this.state;
-        const { itemDetails, startBooking } = this.props;
-        return (
-            <div className="card bordered" style={{padding: '60px 80px'}}>
-                <h4 className="mb-3">Start Booking</h4>
-                <h5 className="h2 text-teal mb-4">${itemDetails.price}{" "}
-                <span className="text-gray-500 font-weight-light">per {itemDetails.unit}</span>
-                </h5>
+    return (
+      <div className="card bordered" style={{ padding: "60px 80px" }}>
+        <h4 className="mb-3">Start Booking</h4>
+        <h5 className="h2 text-teal mb-4">
+          ${itemDetails.price}{" "}
+          <span className="text-gray-500 font-weight-light">
+            per {itemDetails.unit}
+          </span>
+        </h5>
 
-                <label htmlFor="duration">How long you will stay?</label>
+        <label htmlFor="duration">How long you will stay?</label>
         <InputNumber
           max={30}
           suffix={" night"}
@@ -88,34 +104,37 @@ export default class BookingForm extends Component {
         <label htmlFor="date">Pick a date</label>
         <InputDate onChange={this.updateData} name="date" value={data.date} />
 
-                <h6 
-                    className="text-gray-500 font-weight-light"
-                    style={{ marginBottom: 40}} >
+        <h6
+          className="text-gray-500 font-weight-light"
+          style={{ marginBottom: 40 }}
+        >
+          You will pay{" "}
+          <span className="text-gray-900">
+            ${itemDetails.price * data.duration} USD
+          </span>{" "}
+          per{" "}
+          <span className="text-gray-900">
+            {data.duration} {itemDetails.unit}
+          </span>
+        </h6>
 
-                        You will pay {" "}
-                        <span className="text-gray-900 h6">
-                            ${itemDetails.price * data.duration} USD
-                        </span>{" "}
-                        per {" "}
-                        <span className="text-gray-900 h6">
-                            {data.duration} {itemDetails.unit}
-                        </span>
-                    </h6>
-
-                    <Button 
-                        className="btn"
-                        hasShadow
-                        isPrimary
-                        isBlock
-                        onClick={startBooking}>
-                            Continue to Book
-                        </Button>
-            </div>
-        )
-    }
+        <Button
+          className="btn"
+          hasShadow
+          isPrimary
+          isBlock
+          onClick={this.startBooking}
+        >
+          Continue to Book
+        </Button>
+      </div>
+    );
+  }
 }
 
 BookingForm.propTypes = {
-    itemDetails: propTypes.object,
-    startBooking: propTypes.func
+  itemDetails: propTypes.object,
+  startBooking: propTypes.func,
 };
+
+export default withRouter(BookingForm);

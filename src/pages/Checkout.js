@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Fade from "react-reveal/Fade"
+import Fade from "react-reveal/Fade";
+import { connect } from "react-redux";
 
 import Header from 'parts/Header';
 import Button from "elements/button";
@@ -16,7 +17,7 @@ import Completed from 'parts/Checkout/Completed';
 
 import ItemDetails from "json/itemDetails.json"
 
-export default class Checkout extends Component {
+class Checkout extends Component {
     state = {
         data: {
             firstName: "",
@@ -44,10 +45,21 @@ export default class Checkout extends Component {
 
     render() {
         const { data } = this.state;
+        const { checkout } = this.props;
 
-        const checkout = {
-            duration: 3
-        }
+        if(!checkout) return <div className="container">
+            <div className = "row align-items-center justify-center-content text-center" style={{ height: "100vh" }}>
+                <div className="col-3">
+                    Pilih Kamar Dulu
+                    <div>
+                        <Button className="btn mt-5" type="link" href="/" isLight>
+                            Back
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         const steps = {
             bookingInformation: {
                 title: "Booking Information",
@@ -173,3 +185,9 @@ export default class Checkout extends Component {
         )
     }
 }
+
+const mapsStateToProps = (state) =>({
+    checkout : state.checkout
+});
+
+export default connect(mapsStateToProps)(Checkout);

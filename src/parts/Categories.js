@@ -11,12 +11,12 @@ export default function Categories({ data }) {
                 </h4>
                 <div className="container-grid">
                     {
-                    category.items.length === 0 ? 
+                    category.itemId.length === 0 ? 
                     <div className="row">
                         <div className="col-auto align-items-center">
                             There is no property at this category
                         </div>
-                    </div>  : ( category.items.map( (item, index2) =>{
+                    </div>  : ( category.itemId.map( (item, index2) =>{
                     return (<div className="item column-3 row-1" key={`category-${index1}-item-${index2}`}>
                             <Fade bottom delay={300 * index2}>
                                 <div className="card">
@@ -26,7 +26,9 @@ export default function Categories({ data }) {
                                     </div>
                                     )}
                                     <figure className="img-wrapper" style={{height: 180}}>
-                                        <img src={item.imageUrl} className="img-cover" alt={item.name}/>
+                                        <img src={
+                                            item.imageId[0] ? `${process.env.REACT_APP_HOST}/${item.imageId[0].imageUrl}`: ""
+                                            } className="img-cover" alt={item.name}/>
                                     </figure>
                                     <div className="meta-wrapper">
                                         <Button className="stretched-link d-block text-gray-800" type="link" href={`/properties/${item._id}`}>
